@@ -39,7 +39,6 @@ namespace nBIM_ParametricSolid
             entity.GetElementData().AddParameter("DIM_LENGTH").Value = "1000";
             entity.GetElementData().AddParameter("DIM_WIDTH").Value = "1000";
             entity.GetElementData().AddParameter("DIM_HEIGHT").Value = "1000";
-            
 
             //GetElementParametric - Возвращает параметрические данные объекта (геометрия)
             // ViewMode - выбор режима отображения
@@ -52,7 +51,6 @@ namespace nBIM_ParametricSolid
             //Если добавляемых элементов несколько, либо присутствуют вспомогательные элементы, можно воспользоваться методом
             //AddGroupToSubEntity, группирующим несколько элементов и позволяющим управлять группой элементов, как единым примитивом. 
 
-
             //В созданный примитив нужно добавить необходимые ему параметры, стандартный набор для 3д примитива (НАЙТИ ИНФУ ЧТО ЭТО)
             box.AddSubEntityMainParams(true, true, false);
 
@@ -63,7 +61,7 @@ namespace nBIM_ParametricSolid
             //GetGripData() - возвращает информацию о ручках для редактирования геометрии
             //var boxgrips = entity.GetGripData(ViewMode.Model3D);
 
-            //Добавляем грип длины, вручную собирая свойства
+            //Добавляем грип длины, вручную собирая свойства (вектор ориентации должен быть перпендикулярен вектору направления?)
             var gripLength = entity.AddGrip("LENGTH", "Длина", "DIM_LENGTH");
             gripLength.SetSplitParameter("Direction", new Vector3d(1, 0, 0));
             gripLength.SetSplitParameter("Orientation", new Vector3d(0, 0, 1));
@@ -86,6 +84,14 @@ namespace nBIM_ParametricSolid
             BIMStructureMgd.Common.Utilities.AddEntityToDatabase(database, transaction, entity);
 
             transaction.Commit();
+
+            //Вывод сообщений в командую строку с запросом к параметрам объекта
+            curDoc.Editor.WriteMessage("Длина " + entity.GetElementData().GetValue("DIM_LENGTH", ""));
+            curDoc.Editor.WriteMessage("Ширина " + entity.GetElementData().GetValue("DIM_WIDTH", ""));
+            curDoc.Editor.WriteMessage("Высота " + entity.GetElementData().GetValue("DIM_HEIGHT", ""));
+
+
+            
         }
     }
 }
