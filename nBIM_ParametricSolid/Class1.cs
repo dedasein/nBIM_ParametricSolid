@@ -18,6 +18,20 @@ using Platform = HostMgd;
 
 namespace nBIM_ParametricSolid
 {
+
+    public class Bolt
+    {
+        public string Bolt_d;
+        public string Bolt_e;
+        public string Bolt_k;
+        public Bolt(string bolt_d, string bolt_e, string bolt_k)
+        {
+            Bolt_d = bolt_d;
+            Bolt_e = bolt_e;
+            Bolt_k = bolt_k;
+        }
+    }
+
     public class ParametricSolids
     {
         [CommandMethod("nBIM_CreateParametricBox")]
@@ -92,9 +106,10 @@ namespace nBIM_ParametricSolid
 
         }
 
-        
 
-        [CommandMethod("nBIM_BOLTmy")]
+
+
+        [CommandMethod("nBIM_myBOLT")]
         public static void CreateBOLT()
         {
             Document curDoc = Platform.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
@@ -103,11 +118,20 @@ namespace nBIM_ParametricSolid
 
             var entity = ParametricEntityFactory.Create();
 
-            //Параметры лестницы
-            entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
-            entity.GetElementData().AddParameter(sName: "bolt_e").Value = "10.9";
-            
+            Bolt boltM6 = new Bolt("6", "10.9", "4");
+            Bolt boltM8 = new Bolt("8", "14.2", "5.3");
+            Bolt boltM10 = new Bolt("10", "17.6", "6.4");
 
+
+            string stringForBolt_e = $"=case([DIM_DIAMETER] " +
+                $"when {boltM6.Bolt_d} then {boltM6.Bolt_e}, " +
+                $"when {boltM8.Bolt_d} then {boltM8.Bolt_e}, " +
+                $"when {boltM10.Bolt_d} then {boltM10.Bolt_e}, " +
+                $"else \"0\")";
+
+            //Параметры болта
+            entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
+            entity.GetElementData().AddParameter("bolt_e", "", "", stringForBolt_e);
 
             var boltGroup = entity.getElementParametric().AddGroup();
             boltGroup.GetParameter("Name").Value = "Шляпка";
@@ -147,6 +171,8 @@ namespace nBIM_ParametricSolid
             BIMStructureMgd.Common.Utilities.AddEntityToDatabase(database, transaction, entity);
 
             transaction.Commit();
+
+            curDoc.Editor.WriteMessage($"Диаметр {boltM6.Bolt_d}");
 
         }
     }
