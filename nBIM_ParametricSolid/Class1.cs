@@ -90,8 +90,66 @@ namespace nBIM_ParametricSolid
             curDoc.Editor.WriteMessage("Ширина " + entity.GetElementData().GetValue("DIM_WIDTH", ""));
             curDoc.Editor.WriteMessage("Высота " + entity.GetElementData().GetValue("DIM_HEIGHT", ""));
 
+        }
 
+        
+
+        [CommandMethod("nBIM_BOLTmy")]
+        public static void CreateBOLT()
+        {
+            Document curDoc = Platform.ApplicationServices.Application.DocumentManager.MdiActiveDocument;
+
+            Database database = curDoc.Database;
+
+            var entity = ParametricEntityFactory.Create();
+
+            //Параметры лестницы
+            entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
+            entity.GetElementData().AddParameter(sName: "bolt_e").Value = "10.9";
             
+
+
+            var boltGroup = entity.getElementParametric().AddGroup();
+            boltGroup.GetParameter("Name").Value = "Шляпка";
+
+            var boltBase = boltGroup.AddChild("EXTRUSION");
+            boltBase.AddParameter("Height", "", "", "4");
+
+            var contourLine1 = boltBase.AddChild("LINE");
+            contourLine1.AddParameter("ProfilePointX", "0", "", sValueExpr: "");
+            contourLine1.AddParameter("ProfilePointY", "", "", "bolt_e/2");
+
+            var contourLine2 = boltBase.AddChild("LINE");
+            contourLine2.AddParameter("ProfilePointX", "", "", "sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine2.AddParameter("ProfilePointY", "", "", "bolt_e/4");
+
+            var contourLine3 = boltBase.AddChild("LINE");
+            contourLine3.AddParameter("ProfilePointX", "", "", sValueExpr: "sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine3.AddParameter("ProfilePointY", "", "", "-1*bolt_e/4");
+
+            var contourLine4 = boltBase.AddChild("LINE");
+            contourLine4.AddParameter("ProfilePointX", "0", "", sValueExpr: "");
+            contourLine4.AddParameter("ProfilePointY", "", "", "-1*bolt_e/2");
+
+            var contourLine5 = boltBase.AddChild("LINE");
+            contourLine5.AddParameter("ProfilePointX", "", "", sValueExpr: "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine5.AddParameter("ProfilePointY", "", "", "-1*bolt_e/4");
+
+            var contourLine6 = boltBase.AddChild("LINE");
+            contourLine6.AddParameter("ProfilePointX", "", "", sValueExpr: "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine6.AddParameter("ProfilePointY", "", "", "bolt_e/4");
+
+            entity.UpdateElements();
+
+            using Transaction transaction = database.TransactionManager.StartTransaction();
+
+            //Добавляет новый объект в пространство модели nanoCAD BIM Structure
+            BIMStructureMgd.Common.Utilities.AddEntityToDatabase(database, transaction, entity);
+
+            transaction.Commit();
+
         }
     }
 }
+
+//sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)
