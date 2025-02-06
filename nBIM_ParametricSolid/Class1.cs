@@ -121,23 +121,66 @@ namespace nBIM_ParametricSolid
             Bolt boltM6 = new Bolt("6", "10.9", "4");
             Bolt boltM8 = new Bolt("8", "14.2", "5.3");
             Bolt boltM10 = new Bolt("10", "17.6", "6.4");
+            Bolt boltM12 = new Bolt("12", "19.9", "7.5");
+            Bolt boltM14 = new Bolt("14", "22.8", "8.8");
+            Bolt boltM16 = new Bolt("16", "26.2", "10");
+            Bolt boltM18 = new Bolt("18", "29.6", "12");
+            Bolt boltM20 = new Bolt("20", "33.0", "12.2");
+            Bolt boltM22 = new Bolt("22", "37.3", "14");
+            Bolt boltM24 = new Bolt("24", "39.6", "15");
+            Bolt boltM27 = new Bolt("27", "45.2", "17");
+            Bolt boltM30 = new Bolt("30", "50.9", "18.7");
+            Bolt boltM36 = new Bolt("36", "60.8", "22.5");
+            Bolt boltM42 = new Bolt("42", "71.3", "26");
+            Bolt boltM48 = new Bolt("48", "82.6", "30");
 
 
             string stringForBolt_e = $"=case([DIM_DIAMETER] " +
                 $"when {boltM6.Bolt_d} then {boltM6.Bolt_e}, " +
                 $"when {boltM8.Bolt_d} then {boltM8.Bolt_e}, " +
                 $"when {boltM10.Bolt_d} then {boltM10.Bolt_e}, " +
-                $"else \"0\")";
+                $"when {boltM12.Bolt_d} then {boltM12.Bolt_e}, " +
+                $"when {boltM14.Bolt_d} then {boltM14.Bolt_e}, " +
+                $"when {boltM16.Bolt_d} then {boltM16.Bolt_e}, " +
+                $"when {boltM18.Bolt_d} then {boltM18.Bolt_e}, " +
+                $"when {boltM20.Bolt_d} then {boltM20.Bolt_e}, " +
+                $"when {boltM22.Bolt_d} then {boltM22.Bolt_e}, " +
+                $"when {boltM24.Bolt_d} then {boltM24.Bolt_e}, " +
+                $"when {boltM27.Bolt_d} then {boltM27.Bolt_e}, " +
+                $"when {boltM30.Bolt_d} then {boltM30.Bolt_e}, " +
+                $"when {boltM36.Bolt_d} then {boltM36.Bolt_e}, " +
+                $"when {boltM42.Bolt_d} then {boltM42.Bolt_e}, " +
+                $"when {boltM48.Bolt_d} then {boltM48.Bolt_e}, " +
+                $"else \"100\" and Debug.PrintLn(\"Введите значение диаметра болта соответствующее ГОСТ\"))";
+
+            string stringForBolt_k = $"=case([DIM_DIAMETER] " +
+                $"when {boltM6.Bolt_d} then {boltM6.Bolt_k}, " +
+                $"when {boltM8.Bolt_d} then {boltM8.Bolt_k}, " +
+                $"when {boltM10.Bolt_d} then {boltM10.Bolt_k}, " +
+                $"when {boltM12.Bolt_d} then {boltM12.Bolt_k}, " +
+                $"when {boltM14.Bolt_d} then {boltM14.Bolt_k}, " +
+                $"when {boltM16.Bolt_d} then {boltM16.Bolt_k}, " +
+                $"when {boltM18.Bolt_d} then {boltM18.Bolt_k}, " +
+                $"when {boltM20.Bolt_d} then {boltM20.Bolt_k}, " +
+                $"when {boltM22.Bolt_d} then {boltM22.Bolt_k}, " +
+                $"when {boltM24.Bolt_d} then {boltM24.Bolt_k}, " +
+                $"when {boltM27.Bolt_d} then {boltM27.Bolt_k}, " +
+                $"when {boltM30.Bolt_d} then {boltM30.Bolt_k}, " +
+                $"when {boltM36.Bolt_d} then {boltM36.Bolt_k}, " +
+                $"when {boltM42.Bolt_d} then {boltM42.Bolt_k}, " +
+                $"when {boltM48.Bolt_d} then {boltM48.Bolt_k}, " +
+                $"else \"100\" and Debug.PrintLn(\"Введите значение диаметра болта соответствующее ГОСТ\"))";
 
             //Параметры болта
             entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
-            entity.GetElementData().AddParameter("bolt_e", "", "", stringForBolt_e);
+            entity.GetElementData().AddParameter("bolt_e", "", "Диаметр описанной окружности", stringForBolt_e);
+            entity.GetElementData().AddParameter("bolt_k", "", "Высота шляпки", stringForBolt_k);
 
             var boltGroup = entity.getElementParametric().AddGroup();
             boltGroup.GetParameter("Name").Value = "Шляпка";
 
             var boltBase = boltGroup.AddChild("EXTRUSION");
-            boltBase.AddParameter("Height", "", "", "4");
+            boltBase.AddParameter("Height", "", "", "[bolt_k]");
 
             var contourLine1 = boltBase.AddChild("LINE");
             contourLine1.AddParameter("ProfilePointX", "0", "", sValueExpr: "");
