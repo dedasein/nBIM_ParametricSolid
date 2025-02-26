@@ -173,17 +173,18 @@ namespace nBIM_ParametricSolid
 
             //Параметры болта
             entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
+            entity.GetElementData().AddParameter("DIM_LENGTH").Value = "50";
             entity.GetElementData().AddParameter("bolt_e", "", "Диаметр описанной окружности", stringForBolt_e);
             entity.GetElementData().AddParameter("bolt_k", "", "Высота шляпки", stringForBolt_k);
 
             var boltGroup = entity.getElementParametric().AddGroup();
-            boltGroup.GetParameter("Name").Value = "Шляпка";
+            boltGroup.GetParameter("Name").Value = "Болт";
 
             var boltBase = boltGroup.AddChild("EXTRUSION");
             boltBase.AddParameter("Height", "", "", "[bolt_k]");
 
             var contourLine1 = boltBase.AddChild("LINE");
-            contourLine1.AddParameter("ProfilePointX", "0", "", sValueExpr: "");
+            contourLine1.AddParameter("ProfilePointX", "0", "", "");
             contourLine1.AddParameter("ProfilePointY", "", "", "bolt_e/2");
 
             var contourLine2 = boltBase.AddChild("LINE");
@@ -191,20 +192,41 @@ namespace nBIM_ParametricSolid
             contourLine2.AddParameter("ProfilePointY", "", "", "bolt_e/4");
 
             var contourLine3 = boltBase.AddChild("LINE");
-            contourLine3.AddParameter("ProfilePointX", "", "", sValueExpr: "sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine3.AddParameter("ProfilePointX", "", "", "sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
             contourLine3.AddParameter("ProfilePointY", "", "", "-1*bolt_e/4");
 
             var contourLine4 = boltBase.AddChild("LINE");
-            contourLine4.AddParameter("ProfilePointX", "0", "", sValueExpr: "");
+            contourLine4.AddParameter("ProfilePointX", "0", "", "");
             contourLine4.AddParameter("ProfilePointY", "", "", "-1*bolt_e/2");
 
             var contourLine5 = boltBase.AddChild("LINE");
-            contourLine5.AddParameter("ProfilePointX", "", "", sValueExpr: "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine5.AddParameter("ProfilePointX", "", "", "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
             contourLine5.AddParameter("ProfilePointY", "", "", "-1*bolt_e/4");
 
             var contourLine6 = boltBase.AddChild("LINE");
-            contourLine6.AddParameter("ProfilePointX", "", "", sValueExpr: "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
+            contourLine6.AddParameter("ProfilePointX", "", "", "-1*sqrt(((bolt_e/2)^2)+((bolt_e/4)^2)-2*(bolt_e/2)*(bolt_e/4)*0.5)");
             contourLine6.AddParameter("ProfilePointY", "", "", "bolt_e/4");
+
+            var boltPivot = boltGroup.AddChild("EXTRUSION");
+            boltPivot.AddParameter("Height", "", "", "[DIM_LENGTH]");
+
+
+            boltPivot.AddParameter("DirectionX", "1", "", "");
+            boltPivot.AddParameter("DirectionY", "0", "", "");
+            boltPivot.AddParameter("DirectionZ", "0", "", "");
+            boltPivot.AddParameter("OrientationX", "0", "", "");
+            boltPivot.AddParameter("OrientationY", "0", "", "");
+            boltPivot.AddParameter("OrientationZ", "-1", "", "");
+            
+
+            var contourEllipse = boltPivot.AddChild("ARC");
+            contourEllipse.AddParameter("ProfilePointX", "0", "", "");
+            contourEllipse.AddParameter("ProfilePointY", "0", "", "");
+            contourEllipse.AddParameter("Radius", "", "", "[DIM_DIAMETER]/2");
+
+            var gripLength = entity.AddGrip("LENGTH", "Длина", "DIM_LENGTH");
+            gripLength.SetSplitParameter("Direction", new Vector3d(0, 0, -1));
+            gripLength.SetSplitParameter("Orientation", new Vector3d(0, 1, 0));
 
             entity.UpdateElements();
 
