@@ -95,23 +95,23 @@ namespace nBIM_ParametricSolid
         }
 
 
-    public class Bolt
-    {
-        public string Bolt_d;
-        public string Bolt_e;
-        public string Bolt_k;
-        public string Bolt_minLength;
-        public string Bolt_maxLength;
-        public Bolt(string bolt_d, string bolt_e, string bolt_k,string bolt_minLength, string bolt_maxLength)
+        public class Bolt
         {
-            Bolt_d = bolt_d;
-            Bolt_e = bolt_e;
-            Bolt_k = bolt_k;
-            Bolt_maxLength = bolt_maxLength;
-            Bolt_minLength = bolt_minLength;
-        }
-    }
+            public string Bolt_d;
+            public string Bolt_e;
+            public string Bolt_k;
+            public string Bolt_minLength;
+            public string Bolt_maxLength;
 
+            public Bolt(string bolt_d, string bolt_e, string bolt_k, string bolt_minLength, string bolt_maxLength)
+            {
+                Bolt_d = bolt_d;
+                Bolt_e = bolt_e;
+                Bolt_k = bolt_k;
+                Bolt_maxLength = bolt_maxLength;
+                Bolt_minLength = bolt_minLength;
+            }
+        }
 
         [CommandMethod("nBIM_myBOLT")]
         public static void CreateBOLT()
@@ -122,77 +122,40 @@ namespace nBIM_ParametricSolid
 
             var entity = ParametricEntityFactory.Create();
 
-            Bolt boltM6 = new Bolt("6", "10.9", "4", "14", "90");
-            Bolt boltM8 = new Bolt("8", "14.2", "5.3","16","100");
-            Bolt boltM10 = new Bolt("10", "17.6", "6.4", "18","200");
-            Bolt boltM12 = new Bolt("12", "19.9", "7.5", "20","260");
-            Bolt boltM14 = new Bolt("14", "22.8", "8.8", "22","300");
-            Bolt boltM16 = new Bolt("16", "26.2", "10", "25","300");
-            Bolt boltM18 = new Bolt("18", "29.6", "12", "28","300");
-            Bolt boltM20 = new Bolt("20", "33.0", "12.2", "30","300");
-            Bolt boltM22 = new Bolt("22", "37.3", "14", "32","300");
-            Bolt boltM24 = new Bolt("24", "39.6", "15", "35","300");
-            Bolt boltM27 = new Bolt("27", "45.2", "17", "40","300");
-            Bolt boltM30 = new Bolt("30", "50.9", "18.7", "45","300");
-            Bolt boltM36 = new Bolt("36", "60.8", "22.5", "50","300");
-            Bolt boltM42 = new Bolt("42", "71.3", "26", "60","300");
-            Bolt boltM48 = new Bolt("48", "82.6", "30", "70","300");
+            Bolt[] bolts =
+            {
+                new Bolt("6", "10.9", "4", "14", "90"),
+                new Bolt("8", "14.2", "5.3", "16", "100"),
+                new Bolt("10", "17.6", "6.4", "18", "200"),
+                new Bolt("12", "19.9", "7.5", "20", "260"),
+                new Bolt("14", "22.8", "8.8", "22", "300"),
+                new Bolt("16", "26.2", "10", "25", "300"),
+                new Bolt("18", "29.6", "12", "28", "300"),
+                new Bolt("20", "33.0", "12.2", "30", "300"),
+                new Bolt("22", "37.3", "14", "32", "300"),
+                new Bolt("24", "39.6", "15", "35", "300"),
+                new Bolt("27", "45.2", "17", "40", "300"),
+                new Bolt("30", "50.9", "18.7", "45", "300"),
+                new Bolt("36", "60.8", "22.5", "50", "300"),
+                new Bolt("42", "71.3", "26", "60", "300"),
+                new Bolt("48", "82.6", "30", "70", "300"),
+             };
 
 
-            string stringForBolt_e = $"=case([DIM_DIAMETER] " +
-                $"when {boltM6.Bolt_d} then {boltM6.Bolt_e}, " +
-                $"when {boltM8.Bolt_d} then {boltM8.Bolt_e}, " +
-                $"when {boltM10.Bolt_d} then {boltM10.Bolt_e}, " +
-                $"when {boltM12.Bolt_d} then {boltM12.Bolt_e}, " +
-                $"when {boltM14.Bolt_d} then {boltM14.Bolt_e}, " +
-                $"when {boltM16.Bolt_d} then {boltM16.Bolt_e}, " +
-                $"when {boltM18.Bolt_d} then {boltM18.Bolt_e}, " +
-                $"when {boltM20.Bolt_d} then {boltM20.Bolt_e}, " +
-                $"when {boltM22.Bolt_d} then {boltM22.Bolt_e}, " +
-                $"when {boltM24.Bolt_d} then {boltM24.Bolt_e}, " +
-                $"when {boltM27.Bolt_d} then {boltM27.Bolt_e}, " +
-                $"when {boltM30.Bolt_d} then {boltM30.Bolt_e}, " +
-                $"when {boltM36.Bolt_d} then {boltM36.Bolt_e}, " +
-                $"when {boltM42.Bolt_d} then {boltM42.Bolt_e}, " +
-                $"when {boltM48.Bolt_d} then {boltM48.Bolt_e}, " +
-                $"else \"100\" and Debug.PrintLn(\"Введите значение диаметра болта соответствующее ГОСТ\"))";
+            string stringForBolt_e = $"=case([DIM_DIAMETER] ";
+            string stringForBolt_k = $"=case([DIM_DIAMETER] ";
+            string extrusionLength = $"case([DIM_DIAMETER] ";
 
-            string stringForBolt_k = $"=case([DIM_DIAMETER] " +
-                $"when {boltM6.Bolt_d} then {boltM6.Bolt_k}, " +
-                $"when {boltM8.Bolt_d} then {boltM8.Bolt_k}, " +
-                $"when {boltM10.Bolt_d} then {boltM10.Bolt_k}, " +
-                $"when {boltM12.Bolt_d} then {boltM12.Bolt_k}, " +
-                $"when {boltM14.Bolt_d} then {boltM14.Bolt_k}, " +
-                $"when {boltM16.Bolt_d} then {boltM16.Bolt_k}, " +
-                $"when {boltM18.Bolt_d} then {boltM18.Bolt_k}, " +
-                $"when {boltM20.Bolt_d} then {boltM20.Bolt_k}, " +
-                $"when {boltM22.Bolt_d} then {boltM22.Bolt_k}, " +
-                $"when {boltM24.Bolt_d} then {boltM24.Bolt_k}, " +
-                $"when {boltM27.Bolt_d} then {boltM27.Bolt_k}, " +
-                $"when {boltM30.Bolt_d} then {boltM30.Bolt_k}, " +
-                $"when {boltM36.Bolt_d} then {boltM36.Bolt_k}, " +
-                $"when {boltM42.Bolt_d} then {boltM42.Bolt_k}, " +
-                $"when {boltM48.Bolt_d} then {boltM48.Bolt_k}, " +
-                $"else \"100\" and Debug.PrintLn(\"Введите значение диаметра болта соответствующее ГОСТ\"))";
-
-            //Определение допустимых длин болта в зависимости от его диаметра
-            string ExtrusionLength = $"case([DIM_DIAMETER] " +
-                $"when {boltM6.Bolt_d} then if([DIM_LENGTH]<{boltM6.Bolt_minLength} or [DIM_LENGTH]>{boltM6.Bolt_maxLength}, {boltM6.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM8.Bolt_d} then if([DIM_LENGTH]<{boltM8.Bolt_minLength} or [DIM_LENGTH]>{boltM8.Bolt_maxLength}, {boltM8.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM10.Bolt_d} then if([DIM_LENGTH]<{boltM10.Bolt_minLength} or [DIM_LENGTH]>{boltM10.Bolt_maxLength}, {boltM10.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM12.Bolt_d} then if([DIM_LENGTH]<{boltM12.Bolt_minLength} or [DIM_LENGTH]>{boltM12.Bolt_maxLength}, {boltM12.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM14.Bolt_d} then if([DIM_LENGTH]<{boltM14.Bolt_minLength} or [DIM_LENGTH]>{boltM14.Bolt_maxLength}, {boltM14.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM16.Bolt_d} then if([DIM_LENGTH]<{boltM16.Bolt_minLength} or [DIM_LENGTH]>{boltM16.Bolt_maxLength}, {boltM16.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM18.Bolt_d} then if([DIM_LENGTH]<{boltM18.Bolt_minLength} or [DIM_LENGTH]>{boltM18.Bolt_maxLength}, {boltM18.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM20.Bolt_d} then if([DIM_LENGTH]<{boltM20.Bolt_minLength} or [DIM_LENGTH]>{boltM20.Bolt_maxLength}, {boltM20.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM22.Bolt_d} then if([DIM_LENGTH]<{boltM22.Bolt_minLength} or [DIM_LENGTH]>{boltM22.Bolt_maxLength}, {boltM22.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM24.Bolt_d} then if([DIM_LENGTH]<{boltM24.Bolt_minLength} or [DIM_LENGTH]>{boltM24.Bolt_maxLength}, {boltM24.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM27.Bolt_d} then if([DIM_LENGTH]<{boltM27.Bolt_minLength} or [DIM_LENGTH]>{boltM27.Bolt_maxLength}, {boltM27.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM30.Bolt_d} then if([DIM_LENGTH]<{boltM30.Bolt_minLength} or [DIM_LENGTH]>{boltM30.Bolt_maxLength}, {boltM30.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM36.Bolt_d} then if([DIM_LENGTH]<{boltM36.Bolt_minLength} or [DIM_LENGTH]>{boltM36.Bolt_maxLength}, {boltM36.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM42.Bolt_d} then if([DIM_LENGTH]<{boltM42.Bolt_minLength} or [DIM_LENGTH]>{boltM42.Bolt_maxLength}, {boltM42.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"when {boltM48.Bolt_d} then if([DIM_LENGTH]<{boltM48.Bolt_minLength} or [DIM_LENGTH]>{boltM48.Bolt_maxLength}, {boltM48.Bolt_minLength}, [DIM_LENGTH]), " +
-                $"else [Иначе...])";
+            foreach (var bolt in bolts)
+            {
+                stringForBolt_e += $"when {bolt.Bolt_d} then {bolt.Bolt_e}, ";
+                stringForBolt_k += $"when {bolt.Bolt_d} then {bolt.Bolt_k}, ";
+                extrusionLength += $"when {bolt.Bolt_d} then if([DIM_LENGTH]<{bolt.Bolt_minLength} or [DIM_LENGTH]>{bolt.Bolt_maxLength}, {bolt.Bolt_minLength}, [DIM_LENGTH]), ";
+            }
+            char[] charsToTrim = { ' ', ',' };
+            stringForBolt_e = stringForBolt_e.Trim(charsToTrim) + ")";
+            stringForBolt_k = stringForBolt_k.Trim(charsToTrim) + ")";
+            extrusionLength = extrusionLength.Trim(charsToTrim) + ")";
 
             //Параметры болта
             entity.GetElementData().AddParameter("DIM_DIAMETER").Value = "6";
@@ -231,7 +194,7 @@ namespace nBIM_ParametricSolid
             contourLine6.AddParameter("ProfilePointY", "", "", "bolt_e/4");
 
             var boltPivot = boltGroup.AddChild("EXTRUSION");
-            boltPivot.AddParameter("Height", "", "", ExtrusionLength);
+            boltPivot.AddParameter("Height", "", "", extrusionLength);
 
 
             boltPivot.AddParameter("DirectionX", "1", "", "");
@@ -240,7 +203,7 @@ namespace nBIM_ParametricSolid
             boltPivot.AddParameter("OrientationX", "0", "", "");
             boltPivot.AddParameter("OrientationY", "0", "", "");
             boltPivot.AddParameter("OrientationZ", "-1", "", "");
-            
+
 
             var contourEllipse = boltPivot.AddChild("ARC");
             contourEllipse.AddParameter("ProfilePointX", "0", "", "");
@@ -250,7 +213,7 @@ namespace nBIM_ParametricSolid
             var gripLength = entity.AddGrip("LENGTH", "Длина", "DIM_LENGTH");
             gripLength.SetSplitParameter("Direction", new Vector3d(0, 0, -1));
             gripLength.SetSplitParameter("Orientation", new Vector3d(0, 1, 0));
-            gripLength.AddParameter("GripPosition", "", "", ExtrusionLength);
+            gripLength.AddParameter("GripPosition", "", "", extrusionLength);
 
             entity.UpdateElements();
 
@@ -261,7 +224,7 @@ namespace nBIM_ParametricSolid
 
             transaction.Commit();
 
-            curDoc.Editor.WriteMessage($"Диаметр {boltM6.Bolt_d}");
+            curDoc.Editor.WriteMessage($"Диаметр {bolts[0].Bolt_d}");
 
         }
     }
